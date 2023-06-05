@@ -24,7 +24,7 @@ abstract class Graph {
     public abstract float getWeight(int node1, int node2);
 }
 
-class WeightedGraph extends Graph {
+public class WeightedGraph extends Graph {
     private final int[][] adjacencyMatrix;
 
     WeightedGraph(int n,int max_n) {
@@ -83,7 +83,7 @@ class FeromonasGraph extends Graph {
     }
 }
 
-public class AnalyzeData {
+class AnalyzeData {
 
     public static void main(String[] args) {
         //int n = 5;
