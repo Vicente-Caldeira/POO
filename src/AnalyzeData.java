@@ -85,11 +85,13 @@ class FeromonasGraph extends Graph {
 
 public class AnalyzeData {
 
+    //TODO: Copy and implement the command line arguments. Also implement constructor function
+
     public static void main(String[] args) {
         //int n = 5;
         //int max_n = 20;
-        WeightedGraph graphPesoAnt = new WeightedGraph(5,20);
-        FeromonasGraph graphFeromonas = new FeromonasGraph(5,20);
+        WeightedGraph graphPesoAnt = new WeightedGraph(10,20);
+        FeromonasGraph graphFeromonas = new FeromonasGraph(10,20);
 
         // Connect each node to the next node
         for (int i = 0; i < graphPesoAnt.getNodeNumber() - 1; i++) {
@@ -97,6 +99,7 @@ public class AnalyzeData {
             graphPesoAnt.addEdge(i, i + 1, weight);
             graphFeromonas.addEdge(i, i + 1, 0);
         }
+
         // Connect the last node to the first node to create a Hamiltonian cycle
         int weight = (int) (Math.random() * graphPesoAnt.getMaxWeight());
         int n = graphPesoAnt.getNodeNumber();
@@ -109,12 +112,20 @@ public class AnalyzeData {
         for (int i = 0; i < n; i++) {
             indices[i] = i;
         }
-        for (int i = 0; i < Y - n; i++) {
+        System.out.println("Y: " + Y);
+        System.out.println("N: " + (n * (n - 1) / 2));
+        System.out.println("n: " + (n));
+
+        for (int i = 0; i < Y - n - 1 ; i++) {
             int j = i + (int) (Math.random() * (n - i));
+            System.out.println("i: " + i);
+            System.out.println("j: " + j);
             int temp = indices[i];
             indices[i] = indices[j];
             indices[j] = temp;
         }
+
+        System.out.println("Y: " + Y);
         for (int i = 0; i < Y - n; i++) {
             int node1 = indices[i];
             int node2 = indices[i + 1];
@@ -123,17 +134,13 @@ public class AnalyzeData {
             graphFeromonas.addEdge(node1, node2, 0);
         }
 
-        //int[][] graph_peso = graphPesoAnt.getAdjacencyMatrix();
         graphPesoAnt.showMatrix();
         graphFeromonas.showMatrix();
-        /*for (int[] row : graph_peso) {
-            System.out.println(Arrays.toString(row));
-        }
 
-        float[][] graph_feromonas = graphFeromonas.getAdjacencyMatrix();
 
-        for (float[] row : graph_feromonas) {
-            System.out.println(Arrays.toString(row));
-        }*/
+        ACOAnt antman= new ACOAnt(graphPesoAnt.getNodeNumber(), 1);
+        
+        antman.move(graphPesoAnt);
+
     }
 }
