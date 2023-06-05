@@ -97,24 +97,7 @@ class AnalyzeData {
 
         // Sample random edges
         int Y = n + (int) (Math.random() * (n * (n - 1) / 2 - n));
-        Y =21;
-        System.out.println("Y: " + Y);
-        System.out.println("n: " + n);
-        System.out.println("N: " + n*(n - 1) / 2);
-        
-        // int[] indices = new int[n];
-        // for (int i = 0; i < n; i++) {
-        //     indices[i] = i;
-        // }
-        // for (int i = 0; i < Y - n; i++) {
-        //     int j = i + (int) (Math.random() * (n - i));
-        //     int temp = indices[i];
-        //     indices[i] = indices[j];
-        //     indices[j] = temp;
-        // }
-
-        // Cria todas as combinações possíveis de node1 e node2
-        List<int[]> combinations = new ArrayList<>();
+        int[] indices = new int[n];
         for (int i = 0; i < n; i++) {
             for (int j = i + 1; j < n; j++) {
                 combinations.add(new int[]{i, j});
