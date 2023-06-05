@@ -58,8 +58,8 @@ class AnalyzeData {
     public static void main(String[] args) {
         //int n = 5;
         //int max_n = 20;
-        WeightedGraph graphPesoAnt = new WeightedGraph(5,20);
-        FeromonasGraph graphFeromonas = new FeromonasGraph(5,20);
+        WeightedGraph graphPesoAnt = new WeightedGraph(10,20);
+        FeromonasGraph graphFeromonas = new FeromonasGraph(10,20);
 
         // Connect each node to the next node
         for (int i = 0; i < graphPesoAnt.getNodeNumber() - 1; i++) {
@@ -75,7 +75,7 @@ class AnalyzeData {
 
         // Sample random edges
         int Y = n + (int) (Math.random() * (n * (n - 1) / 2 - n));
-        int[] indices = new int[n];
+        int[] indices = new int[Y];
         for (int i = 0; i < n; i++) {
             indices[i] = i;
         }
