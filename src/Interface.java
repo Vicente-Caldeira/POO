@@ -1,3 +1,8 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+
 public class Interface {
     
     public static void main(String[] args) {
@@ -14,6 +19,20 @@ public class Interface {
             System.out.println("Incorrect indicator, should be -f.");
         if (!args[1].endsWith(".txt")) {
             System.out.println("The file is an incorrect format, should be a .txt file.");
+        }
+        else{
+            File file = new File(args[1]);
+            try {
+                Scanner scanner = new Scanner(file);
+                
+                while (scanner.hasNextLine()) {
+                    String line = scanner.nextLine();
+                    System.out.println(line);
+                }
+                scanner.close();
+            } catch (FileNotFoundException e) {
+                System.out.println("Arquivo não encontrado: " + e.getMessage());
+            }
         }
 
         System.out.println("Arguments are " + args[0] + " " + args[1]);
