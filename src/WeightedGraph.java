@@ -1,4 +1,10 @@
 import java.util.Arrays;
+import java.util.Random;
+import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 
 abstract class Graph {
     private int nodeNumber;
@@ -51,6 +57,16 @@ public class WeightedGraph extends Graph {
             System.out.println(Arrays.toString(row));
         }
     }
+    public int numCasa(int n){
+        int z = 0;
+        for (int i = 0; i < n; i++){
+            for (int j = 0; j < n; j++){
+                if(adjacencyMatrix[i][j] != 0)
+                    z++;
+            }
+        }
+        return z;
+    }
 }
 
 class AnalyzeData {
@@ -58,43 +74,84 @@ class AnalyzeData {
     public static void main(String[] args) {
         //int n = 5;
         //int max_n = 20;
-        WeightedGraph graphPesoAnt = new WeightedGraph(5,20);
-        FeromonasGraph graphFeromonas = new FeromonasGraph(5,20);
+        WeightedGraph graphPesoAnt = new WeightedGraph(7,20);
+        FeromonasGraph graphFeromonas = new FeromonasGraph(7,20);
 
         // Connect each node to the next node
         for (int i = 0; i < graphPesoAnt.getNodeNumber() - 1; i++) {
-            int weight = (int) (Math.random() * graphPesoAnt.getMaxWeight());
+            int weight;
+            do{
+                weight = (int) (Math.random() * graphPesoAnt.getMaxWeight());
+            }while(weight == 0);
             graphPesoAnt.addEdge(i, i + 1, weight);
             graphFeromonas.addEdge(i, i + 1, 0);
         }
         // Connect the last node to the first node to create a Hamiltonian cycle
-        int weight = (int) (Math.random() * graphPesoAnt.getMaxWeight());
+        int weight;
+        do{
+            weight = (int) (Math.random() * graphPesoAnt.getMaxWeight());
+        }while(weight == 0);
         int n = graphPesoAnt.getNodeNumber();
         graphPesoAnt.addEdge(n - 1, 0, weight);
         graphFeromonas.addEdge(n - 1, 0, 0);
 
         // Sample random edges
         int Y = n + (int) (Math.random() * (n * (n - 1) / 2 - n));
-        int[] indices = new int[n];
+        Y =21;
+        System.out.println("Y: " + Y);
+        System.out.println("n: " + n);
+        System.out.println("N: " + n*(n - 1) / 2);
+        
+        // int[] indices = new int[n];
+        // for (int i = 0; i < n; i++) {
+        //     indices[i] = i;
+        // }
+        // for (int i = 0; i < Y - n; i++) {
+        //     int j = i + (int) (Math.random() * (n - i));
+        //     int temp = indices[i];
+        //     indices[i] = indices[j];
+        //     indices[j] = temp;
+        // }
+
+        // Cria todas as combinações possíveis de node1 e node2
+        List<int[]> combinations = new ArrayList<>();
         for (int i = 0; i < n; i++) {
-            indices[i] = i;
+            for (int j = i + 1; j < n; j++) {
+                combinations.add(new int[]{i, j});
+            }
         }
+
+        // Embaralha a lista de combinações
+        Collections.shuffle(combinations);
+
+        // Cria um conjunto para armazenar as combinações já selecionadas
+        Set<Integer> selectedCombinations = new HashSet<>();
+
+        // Seleciona uma combinação aleatória a cada iteração
         for (int i = 0; i < Y - n; i++) {
-            int j = i + (int) (Math.random() * (n - i));
-            int temp = indices[i];
-            indices[i] = indices[j];
-            indices[j] = temp;
-        }
-        for (int i = 0; i < Y - n; i++) {
-            int node1 = indices[i];
-            int node2 = indices[i + 1];
-            weight = (int) (Math.random() * graphPesoAnt.getMaxWeight());
+            int combinationIndex;
+            do {
+                combinationIndex = (int) (Math.random() * combinations.size());
+            } while (selectedCombinations.contains(combinationIndex));
+
+            selectedCombinations.add(combinationIndex);
+
+            int[] randomCombination = combinations.get(combinationIndex);
+            int node1 = randomCombination[0];
+            int node2 = randomCombination[1];
+
+            do {
+                weight = (int) (Math.random() * graphPesoAnt.getMaxWeight());
+            } while (weight == 0);
+
             graphPesoAnt.addEdge(node1, node2, weight);
             graphFeromonas.addEdge(node1, node2, 0);
+            System.out.println("I: " + i + " Node1: " + node1 + " Node2: " + node2 + " Peso: " + weight);
         }
 
         //int[][] graph_peso = graphPesoAnt.getAdjacencyMatrix();
         graphPesoAnt.showMatrix();
+        System.out.println("Ligações: " + graphPesoAnt.numCasa(graphPesoAnt.getNodeNumber()));
         graphFeromonas.showMatrix();
         /*for (int[] row : graph_peso) {
             System.out.println(Arrays.toString(row));
