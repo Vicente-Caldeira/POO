@@ -97,22 +97,7 @@ class AnalyzeData {
 
         // Sample random edges
         int Y = n + (int) (Math.random() * (n * (n - 1) / 2 - n));
-        Y =21;
-        System.out.println("Y: " + Y);
-        System.out.println("n: " + n);
-        System.out.println("N: " + n*(n - 1) / 2);
-        
-        // int[] indices = new int[n];
-        // for (int i = 0; i < n; i++) {
-        //     indices[i] = i;
-        // }
-        // for (int i = 0; i < Y - n; i++) {
-        //     int j = i + (int) (Math.random() * (n - i));
-        //     int temp = indices[i];
-        //     indices[i] = indices[j];
-        //     indices[j] = temp;
-        // }
-
+    
         // Cria todas as combinações possíveis de node1 e node2
         List<int[]> combinations = new ArrayList<>();
         for (int i = 0; i < n; i++) {
@@ -130,37 +115,29 @@ class AnalyzeData {
         // Seleciona uma combinação aleatória a cada iteração
         for (int i = 0; i < Y - n; i++) {
             int combinationIndex;
+            int node1;
+            int node2;
+        
             do {
                 combinationIndex = (int) (Math.random() * combinations.size());
-            } while (selectedCombinations.contains(combinationIndex));
-
+                int[] randomCombination = combinations.get(combinationIndex);
+                node1 = randomCombination[0];
+                node2 = randomCombination[1];
+            } while (selectedCombinations.contains(combinationIndex) || graphPesoAnt.getWeight(node1, node2) != 0);
+        
             selectedCombinations.add(combinationIndex);
-
-            int[] randomCombination = combinations.get(combinationIndex);
-            int node1 = randomCombination[0];
-            int node2 = randomCombination[1];
-
+        
             do {
                 weight = (int) (Math.random() * graphPesoAnt.getMaxWeight());
             } while (weight == 0);
-
+        
             graphPesoAnt.addEdge(node1, node2, weight);
             graphFeromonas.addEdge(node1, node2, 0);
-            System.out.println("I: " + i + " Node1: " + node1 + " Node2: " + node2 + " Peso: " + weight);
         }
 
-        //int[][] graph_peso = graphPesoAnt.getAdjacencyMatrix();
         graphPesoAnt.showMatrix();
-        System.out.println("Ligações: " + graphPesoAnt.numCasa(graphPesoAnt.getNodeNumber()));
         graphFeromonas.showMatrix();
-        /*for (int[] row : graph_peso) {
-            System.out.println(Arrays.toString(row));
-        }
-
-        float[][] graph_feromonas = graphFeromonas.getAdjacencyMatrix();
-
-        for (float[] row : graph_feromonas) {
-            System.out.println(Arrays.toString(row));
-        }*/
+        ACOAnt AntColony = new ACOAnt(graphPesoAnt.getNodeNumber(), 2);
+        AntColony.move(graphPesoAnt);
     }
 }
