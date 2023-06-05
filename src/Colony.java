@@ -78,9 +78,9 @@ public class Colony {
         this.ants = new ArrayList<>();
     }
 
-    public void createAnt(int AntNumber, int ColonyNode) {
+    public void createAnt(int AntNumber, int ColonyNode, WeightedGraph graph, Constant projConstant) {
         for (int i = 0; i < AntNumber; i++) {
-            ACOAnt ant = new ACOAnt(n);
+            ACOAnt ant = new ACOAnt(graph.getNodeNumber(), (int)(Math.random()* projConstant.getNodeInit()));
             ants.add(ant);
         }
     }

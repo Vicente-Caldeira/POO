@@ -145,6 +145,7 @@ class Interface {
                 graphPesoAnt= new WeightedGraph(programmConstant.getNodeNumber(),programmConstant.getNodeInit());
                 int i = 0;
                 int j = 0;
+                //Copiar matriz
                 while (scanner.hasNextLine()) {
                     line = scanner.nextLine();
                     part = line.split(" ");
