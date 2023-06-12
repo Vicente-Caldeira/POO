@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 public class Constant{
     private int NodeNumber;
+    private int maxWeight;
     private int NodeInit;
     private float alpha;
     private float beta;
@@ -17,6 +18,7 @@ public class Constant{
     Constant(){
         this.NodeNumber = 0;
         this.NodeInit = 0;
+        this.maxWeight = 0;
         this.alpha = 0;
         this.beta = 0;
         this.delta = 0;
@@ -29,6 +31,9 @@ public class Constant{
 
     public void setNodeNumber(int NodeNUmber){
         this.NodeNumber = NodeNUmber;
+    }
+    public void setmaxWeight(int maxWeight){
+        this.maxWeight = maxWeight;
     }
     public void setNodeInit(int NodeInit){
         this.NodeInit = NodeInit;
@@ -60,6 +65,9 @@ public class Constant{
     public int getNodeNumber(){
         return NodeNumber;
     }
+    public int getmaxWeight(){
+        return maxWeight;
+    }
     public int getNodeInit(){
         return NodeInit;
     }
@@ -78,7 +86,7 @@ public class Constant{
     public float getrho(){
         return rho;
     }
-    public float gamma(){
+    public float getgamma(){
         return gamma;
     }
     public float getnu(){
@@ -89,6 +97,7 @@ public class Constant{
     } 
     public void print(){
         System.out.println("NodeNumber: " + NodeNumber);
+        System.out.println("maxweight: " + maxWeight);
         System.out.println("NodeInit: " + NodeInit);
         System.out.println("alpha: " + alpha);
         System.out.println("beta: " + beta);
@@ -156,7 +165,13 @@ class Interface {
                     System.out.println(line);
                 }
                 graphPesoAnt.showMatrix();
+                //System.out.println("Peso total do grafo: " + graphPesoAnt.totalWeightGraph());
                 scanner.close();
+
+                ACOAnt AntColony = new ACOAnt(graphPesoAnt.getNodeNumber(), 2);
+                AntColony.move(graphPesoAnt);
+                System.out.println("Melhor caminho: ");
+         
             } catch (FileNotFoundException e) {
                 System.out.println("Arquivo não encontrado: " + e.getMessage());
             }
@@ -166,12 +181,47 @@ class Interface {
     }
 
     public static void withInput(String[] args) {
-        if (!args[0].equals("-r"))
-            System.out.println("Incorrect indicator, should be -r.");
+        if (!args[0].equals("-r")){
+                System.out.println("Incorrect indicator, should be -r.");
+                System.out.println("Args[0]: " + args[0]);            
+            }
+        else{
+            Constant programmConstant = new Constant();
+            WeightedGraph graphPesoAnt;
+            FeromonasGraph feromonasGraph;
+
+            programmConstant.setNodeNumber(Integer.parseInt(args[1]));
+            programmConstant.setmaxWeight(Integer.parseInt(args[2]));
+            programmConstant.setNodeInit(Integer.parseInt(args[3]));
+            programmConstant.setalpha(Float.parseFloat(args[4]));
+            programmConstant.setbeta(Float.parseFloat(args[5]));
+            programmConstant.setdelta(Float.parseFloat(args[6]));
+            programmConstant.seteta(Float.parseFloat(args[7]));
+            programmConstant.setrho(Float.parseFloat(args[8]));
+            programmConstant.setgamma(Float.parseFloat(args[9]));
+            programmConstant.setnu(Float.parseFloat(args[10]));
+            programmConstant.settau(Float.parseFloat(args[11]));
+
+            
+
+            programmConstant.print();
+
+            graphPesoAnt= new WeightedGraph(programmConstant.getNodeNumber(),programmConstant.getmaxWeight());
+            feromonasGraph = new FeromonasGraph(programmConstant.getNodeNumber());
+
+            graphPesoAnt.createRandomMatrix(graphPesoAnt,feromonasGraph);
+            graphPesoAnt.showMatrix();
+            feromonasGraph.showMatrix();
+
+        }
         System.out.println("Arguments are " + args[0] + " " + args[1] + " " + args[2] + " " + args[3] + " " +
                 args[4] + " " + args[5] + " " + args[6] + " " + args[7] + " " + args[8] + " " +
                 args[9] + " " + args[10] + " " + args[11]);
+        
+    
+        
     }
+
 }
 
 

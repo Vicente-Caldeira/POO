@@ -3,8 +3,8 @@ import java.util.Arrays;
 public class FeromonasGraph extends Graph {
     private final float[][] adjacencyMatrix;
 
-    FeromonasGraph(int n,int max_n) {
-        super(n,max_n);
+    FeromonasGraph(int n) {
+        super(n);
         this.adjacencyMatrix = new float[n][n];
     }
 
