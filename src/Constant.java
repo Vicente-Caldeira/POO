@@ -125,6 +125,7 @@ class Interface {
     public static void withFile(String[] args) {
         Constant programmConstant = new Constant();
         WeightedGraph graphPesoAnt;
+        FeromonasGraph feromonasGraph;
         // Verificar os argumentos
         if (!args[0].equals("-f"))
             System.out.println("Incorrect indicator, should be -f.");
@@ -152,6 +153,7 @@ class Interface {
                 programmConstant.print();
 
                 graphPesoAnt= new WeightedGraph(programmConstant.getNodeNumber(),programmConstant.getNodeInit());
+                feromonasGraph= new FeromonasGraph(programmConstant.getNodeNumber());
                 int i = 0;
                 int j = 0;
                 //Copiar matriz
@@ -160,6 +162,7 @@ class Interface {
                     part = line.split(" ");
                     for(j = 0; j < graphPesoAnt.getNodeNumber(); j++){
                         graphPesoAnt.addEdge(i, j, Integer.parseInt(part[j]));
+                        feromonasGraph.addEdge(i,j,0.0F);
                     }
                     i++;
                     System.out.println(line);
@@ -168,9 +171,11 @@ class Interface {
                 //System.out.println("Peso total do grafo: " + graphPesoAnt.totalWeightGraph());
                 scanner.close();
 
-                ACOAnt AntColony = new ACOAnt(graphPesoAnt.getNodeNumber(), 2);
-                AntColony.move(graphPesoAnt);
-                System.out.println("Melhor caminho: ");
+                //ACOAnt AntColony = new ACOAnt(graphPesoAnt.getNodeNumber(), 2);
+
+                Colony AntColony = new Colony();
+                AntColony.createAnt((int) programmConstant.getnu(), programmConstant.getNodeInit(), programmConstant.getNodeNumber());
+                AntColony.moveAnts(graphPesoAnt,feromonasGraph,programmConstant);
          
             } catch (FileNotFoundException e) {
                 System.out.println("Arquivo não encontrado: " + e.getMessage());

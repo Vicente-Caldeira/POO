@@ -1,5 +1,4 @@
 import java.util.Arrays;
-import java.util.Random;
 import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
@@ -207,10 +206,10 @@ class AnalyzeData {
             graphFeromonas.addEdge(node1, node2, 0);
         }
 
-        graphPesoAnt.showMatrix();
-        graphFeromonas.showMatrix();
-        ACOAnt AntColony = new ACOAnt(graphPesoAnt.getNodeNumber(), 5);
-        AntColony.move(graphPesoAnt);
+        // graphPesoAnt.showMatrix();
+        // graphFeromonas.showMatrix();
+        // ACOAnt AntColony = new ACOAnt(graphPesoAnt.getNodeNumber(), 5);
+        // AntColony.move(graphPesoAnt,graphFeromonas);
 
         System.out.println("Melhor caminho: ");
     }
