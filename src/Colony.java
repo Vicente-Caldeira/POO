@@ -74,14 +74,6 @@ class ACOAnt implements ant{
         return nextNode;
     }
 
-    // private int getPathWeight(WeightedGraph graph){
-    //     int count = 0;
-    //     for(int i = 0; i < this.currentPath.size() - 1; i += 2){
-    //         count += graph.getWeight(this.currentPath.get(i),this.currentPath.get(i + 1));
-    //     }
-    //     return count;
-    // }
-
     private void update_vectors(int nextNode) {
 
         // Find the position (index) where the given number would be located in the first array
@@ -219,7 +211,5 @@ public class Colony {
             ant.findPath(graph);
         }
     }
- 
 
 }
-

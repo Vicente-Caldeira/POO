@@ -124,6 +124,7 @@ class Interface {
 
     public static void withFile(String[] args) {
         Constant programmConstant = new Constant();
+        Queue filaEventQueue = new Queue();
         WeightedGraph graphPesoAnt;
         FeromonasGraph feromonasGraph;
         // Verificar os argumentos
@@ -173,6 +174,7 @@ class Interface {
 
                 //ACOAnt AntColony = new ACOAnt(graphPesoAnt.getNodeNumber(), 2);
 
+                
                 Colony AntColony = new Colony();
                 AntColony.createAnt((int) programmConstant.getnu(), programmConstant.getNodeInit(), programmConstant.getNodeNumber());
                 AntColony.moveAnts(graphPesoAnt,feromonasGraph,programmConstant);

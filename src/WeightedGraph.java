@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.PriorityQueue;
 
 abstract class Graph {
     private int nodeNumber;
@@ -69,6 +70,7 @@ public class WeightedGraph extends Graph {
         }
         return z;
     }
+    
     public int totalWeightGraph(){
         int count = 0;
         for (int i = 0; i < this.getNodeNumber(); i++){
