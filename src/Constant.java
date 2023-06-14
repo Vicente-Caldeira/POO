@@ -2,6 +2,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+//import javax.lang.model.util.SimpleAnnotationValueVisitor14;
+
 public class Constant{
     private int NodeNumber;
     private int maxWeight;
@@ -127,6 +129,7 @@ class Interface {
         Queue filaEventQueue = new Queue();
         WeightedGraph graphPesoAnt;
         FeromonasGraph feromonasGraph;
+        Observation simulationObserver;
         // Verificar os argumentos
         if (!args[0].equals("-f"))
             System.out.println("Incorrect indicator, should be -f.");
@@ -155,6 +158,7 @@ class Interface {
 
                 graphPesoAnt= new WeightedGraph(programmConstant.getNodeNumber(),programmConstant.getNodeInit());
                 feromonasGraph= new FeromonasGraph(programmConstant.getNodeNumber());
+                simulationObserver = new Observation(programmConstant.getNodeNumber());
                 int i = 0;
                 int j = 0;
                 //Copiar matriz
@@ -174,10 +178,18 @@ class Interface {
 
                 //ACOAnt AntColony = new ACOAnt(graphPesoAnt.getNodeNumber(), 2);
 
-                
-                Colony AntColony = new Colony();
-                AntColony.createAnt((int) programmConstant.getnu(), programmConstant.getNodeInit(), programmConstant.getNodeNumber());
-                AntColony.moveAnts(graphPesoAnt,feromonasGraph,programmConstant);
+
+                Colony AntColony = new Colony(feromonasGraph);
+                AntColony.createAnt(((int) programmConstant.getnu()), programmConstant.getNodeInit(), programmConstant.getNodeNumber(),filaEventQueue,graphPesoAnt,programmConstant,simulationObserver);
+                //AntColony.moveAnts(graphPesoAnt,feromonasGraph,programmConstant);
+                for(int k = 1; k < 20; k++){
+                    filaEventQueue.add(new EventObservation(i*programmConstant.gettau()/20, i, simulationObserver));
+                }
+                filaEventQueue.add(new EventEnd(programmConstant.gettau(),simulationObserver, 20));
+                while(filaEventQueue.size() > 0){
+                    Event run = filaEventQueue.next();
+                    run.runEvent(filaEventQueue);
+                }
          
             } catch (FileNotFoundException e) {
                 System.out.println("Arquivo não encontrado: " + e.getMessage());

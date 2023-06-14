@@ -1,7 +1,7 @@
 import java.util.*;
 
 interface ant {
-    void move (WeightedGraph graph,FeromonasGraph feromonas, Constant file);
+    double move (Queue list, FeromonasGraph feromonas, Constant file,double time);
     int findPath (WeightedGraph graph);
 }
 
@@ -12,8 +12,13 @@ class ACOAnt implements ant{
     private Set<Integer> visitedNodes;
     private List<Integer> currentPath;
     private int startNode;
+    private WeightedGraph graph;
+    private float alpha;
+    private float beta;
+    private float delta;
+    private Observation observer;
 
-    ACOAnt(int n, int initialNode){
+    ACOAnt(int n, int initialNode,WeightedGraph graph,Constant file, Observation observer){
 
         this.visitedNodes = new HashSet<>(n);
         this.currentPath = new ArrayList<>(n);
@@ -21,40 +26,69 @@ class ACOAnt implements ant{
         this.visitedNodes.add(initialNode);
         this.currentPath.add(initialNode);
         this.startNode = initialNode;
+        this.graph = graph;
+        this.alpha = file.getaplha();
+        this.beta = file.getbeta();
+        this.delta = file.getdelta();
+        this.observer=observer;
     }
     public List<Integer> getCurrentPath(){
         return this.currentPath;
     }
-    public void move(WeightedGraph graph,FeromonasGraph feromonas, Constant file) {
+
+
+    public void resetPaths(int count) {
+
+        observer.checkPath(currentPath, count);
+        System.out.println("Visited nodes before clearing: " + visitedNodes);
+
+        int size = currentPath.size();
+        List<Integer> subList = currentPath.subList(0, size);
+        visitedNodes.removeAll(subList);
+        subList.clear();
+
+        currentPath.add(startNode);
+        visitedNodes.add(startNode);
+
+        System.out.println("Visited nodes after clearing: " + visitedNodes);
+
+        return;
+    }
+
+    public double move(Queue list, FeromonasGraph feromonas, Constant file, double time) {
         //findPath(graph);
 
-        while (true) {
-            int nextNode = choosePath(graph,file,feromonas);
-            if (visitedNodes.size() < graph.getNodeNumber()) {
-                visitedNodes.add(nextNode);
-                currentPath.add(nextNode);
-                currentNode = nextNode;
-            }
-            else {
-                System.out.println("No possible nodes");
-                currentPath.add(startNode);
-                System.out.println("Current Path: " + currentPath);
+        int nextNode = choosePath(feromonas);
+        double edgeTime = 0.0;
+        System.out.println("Next node BATATA FRITA: " + nextNode);
+        if (currentPath.size() < graph.getNodeNumber()+1 && nextNode != -1) {
+            visitedNodes.add(nextNode);
+            currentPath.add(nextNode);
+            edgeTime = graph.getWeight(currentNode, nextNode) * delta;
+            System.out.println("Current path atual: " + currentPath);
 
-                int count = 0;
-                for(int i = 0; i < this.currentPath.size() - 1; i++){
-                    System.out.println("I: " + this.currentPath.get(i) + " J: " + this.currentPath.get(i + 1) + " Weight: "+ graph.getWeight(this.currentPath.get(i),this.currentPath.get(i + 1)));
-                    count += graph.getWeight(this.currentPath.get(i),this.currentPath.get(i + 1));
-                }
-                System.out.println("Path weight:" + count);
-                FeromonasCycle updateFeromonas = new FeromonasCycle(graph.totalWeightGraph(), count);
-                updateFeromonas.updateFeromonas(file,feromonas, this.currentPath);
-
-            return;
-            }
+            //System.out.println("Node1: "+ currentNode + " Node2: " + nextNode + " Weight: " + graph.getWeight(currentNode, nextNode));
+            currentNode = nextNode;
         }
+        else {
+            System.out.println("No possible nodes");
+            //currentPath.add(startNode);
+            // currentPath.add(firstNode);
+            System.out.println("Current Path: " + currentPath);
+
+            int count = 0;
+            for(int i = 0; i < this.currentPath.size() - 1; i++){
+                System.out.println("I: " + this.currentPath.get(i) + " J: " + this.currentPath.get(i + 1) + " Weight: "+ graph.getWeight(this.currentPath.get(i),this.currentPath.get(i + 1)));
+                count += graph.getWeight(this.currentPath.get(i),this.currentPath.get(i + 1));
+            }
+            System.out.println("Path weight:" + count);
+            FeromonasCycle updateFeromonas = new FeromonasCycle(graph.totalWeightGraph(), count,feromonas);
+            updateFeromonas.updateFeromonas(list,file,this.currentPath,time,observer);
+            resetPaths(count);
 
         
-
+        }
+        return edgeTime;
     }
     public int findPath(WeightedGraph graph) {
 
@@ -91,16 +125,18 @@ class ACOAnt implements ant{
         return;
 
     }
-    private int chooseNextNode(WeightedGraph graph, Constant file, FeromonasGraph feromonas, List<Integer> possibleNodes){
+    private int chooseNextNode(FeromonasGraph feromonas, List<Integer> possibleNodes){
         int nextNode = 0;
         int totalOptions=possibleNodes.size();
+
+        System.out.println("Possible Nodes: " + possibleNodes);
 
         List<Float> cijk = new ArrayList<>();
 
         float ci=0;
         for(int i=0; i<totalOptions; i++){
             float weight=graph.getWeight(currentNode,possibleNodes.get(i));
-            float cij=(file.getaplha()+feromonas.getWeight(currentNode,possibleNodes.get(i)))/(file.getbeta()+weight);
+            float cij=(alpha+feromonas.getWeight(currentNode,possibleNodes.get(i)))/(beta+weight);
             cijk.add(cij);
             ci+=cij;
         }
@@ -136,14 +172,14 @@ class ACOAnt implements ant{
                     nextNode = possibleNodes.get(i+1);
             }
         }
-        System.out.println("Next Node: " + nextNode);
+        //System.out.println("Next Node: " + nextNode);
         return nextNode;
     }
 
-    private int choosePath(WeightedGraph graph, Constant file, FeromonasGraph feromonas) {
+    private int choosePath(FeromonasGraph feromonas) {
 
         List<Integer> possibleNodes = new ArrayList<>();
-
+        //procura todos os nós adjacentes
         for (int i = 0; i < graph.getNodeNumber(); i++) {
             if (graph.getWeight(currentNode, i) != 0)
                 if (!visitedNodes.contains(i)) {
@@ -151,14 +187,15 @@ class ACOAnt implements ant{
                 }
         }
 
-        System.out.println("Possible Nodes size: " + possibleNodes.size());
+        //System.out.println("Possible Nodes size: " + possibleNodes.size());
 
         //all adjacent nodes are visited
 
-        if(possibleNodes.size() == 0 && visitedNodes.size() == graph.getNodeNumber() && graph.getWeight(currentNode, startNode) != 0) {
-            System.out.println("All nodes visited");
-            int nextNode = startNode;
-            return nextNode;
+        if(possibleNodes.size() == 0 && visitedNodes.size() == graph.getNodeNumber() && graph.getWeight(currentNode, startNode) != 0 && currentNode != startNode) {
+            currentPath.add(startNode);
+            System.out.println("All nodes visited, returned to the nest");
+
+            return -1;
         }
 
         if (possibleNodes.size() == 0) {
@@ -171,10 +208,10 @@ class ACOAnt implements ant{
             int nextNode = possibleNodes.get(0);
             return nextNode;
         }
-        int nextNode = chooseNextNode(graph, file, feromonas, possibleNodes);
+
+        int nextNode = chooseNextNode(feromonas, possibleNodes);
 
         System.out.println("Next Node: " + nextNode);
-        System.out.println("Current path atual: " + currentPath);
 
         return nextNode;
     }
@@ -183,33 +220,36 @@ class ACOAnt implements ant{
 
 public class Colony {
     private List <ACOAnt> ants;
+    private FeromonasGraph feromonasGraph;
 
-    Colony() {
+    Colony(FeromonasGraph feromonasGraph) {
         this.ants = new ArrayList<>();
+        this.feromonasGraph = feromonasGraph;
     }
 
-    public void createAnt(int AntNumber, int startNode, int nodeNumber) {
+    public void createAnt(int AntNumber, int startNode, int nodeNumber, Queue list,WeightedGraph graph, Constant file, Observation fileObservation) {
         for (int i = 0; i < AntNumber; i++) {
-            ACOAnt ant = new ACOAnt(nodeNumber, startNode);
+            ACOAnt ant = new ACOAnt(nodeNumber, startNode,graph,file,fileObservation);
             ants.add(ant);
+            list.add(new EventMove(0.0,ant,feromonasGraph,file,fileObservation));
         }
     }
 
-    public void moveAnts(WeightedGraph graph,FeromonasGraph feromonas, Constant file) {
-        int i=0;
-        for (ACOAnt ant : ants) {
-            i++;
-            System.out.println("Ant: " + i);
-            //System.out.println("BATATA MAS NAO E FRITA E NAO E DOCE E NAO E SALGADA E NAO E AZEDA E NAO E AMARGA E A BATATA DOCE E UMA DELICIAAAAAAAAAAAAAAAAA MUITO GOSTOSA E MUITO SAUDAVEL");
-            ant.move(graph,feromonas,file);
-            feromonas.showMatrix();
-        }
-    }
+    // public void moveAnts(WeightedGraph graph,FeromonasGraph feromonas, Constant file) {
+    //     int i=0;
+    //     for (ACOAnt ant : ants) {
+    //         i++;
+    //         System.out.println("Ant: " + i);
+    //         //System.out.println("BATATA MAS NAO E FRITA E NAO E DOCE E NAO E SALGADA E NAO E AZEDA E NAO E AMARGA E A BATATA DOCE E UMA DELICIAAAAAAAAAAAAAAAAA MUITO GOSTOSA E MUITO SAUDAVEL");
+    //         ant.move(feromonas,file);
+    //         feromonas.showMatrix();
+    //     }
+    // }
 
-    public void findPath(WeightedGraph graph) {
-        for (ACOAnt ant : ants) {
-            ant.findPath(graph);
-        }
-    }
+    // public void findPath(WeightedGraph graph) {
+    //     for (ACOAnt ant : ants) {
+    //         ant.findPath(graph);
+    //     }
+    // }
 
 }
