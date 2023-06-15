@@ -15,7 +15,7 @@ SRCDIR = src
 BINDIR = ../bin
 
 # Specify the list of Java source files
-SOURCES := $(wildcard $(SRCDIR)/*.java)
+SOURCES := $(wildcard $(SRCDIR)/**/*.java)
 
 # Specify the list of class files to compile
 CLASSES := $(SOURCES:$(SRCDIR)/%.java=$(BINDIR)/%.class)
