@@ -92,6 +92,9 @@ public class Interface {
                     i++;
                     System.out.println(line);
                 }
+                System.out.println();
+                System.out.println("with graph:");
+
                 graphPesoAnt.showMatrix();
                 scanner.close();
 
@@ -155,8 +158,9 @@ public class Interface {
             simulationObserver = new Observation(programmConstant.getNodeNumber());
 
             graphPesoAnt.createRandomMatrix(graphPesoAnt,feromonasGraph);
+            System.out.println();
+            System.out.println("with graph:");
             graphPesoAnt.showMatrix();
-            feromonasGraph.showMatrix();
 
             // Inicio da simulação
 

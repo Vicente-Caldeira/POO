@@ -1,16 +1,32 @@
 package pec;
 
-public class EventObservation extends Event{
+/**
+ * The EventObservation class represents an event that performs an observation at a specific time during the simulation.
+ */
+public class EventObservation extends Event {
     private Observation observationFile;
     private int count;
 
-    public EventObservation(double time, int count, Observation observationFile){
+    /**
+     * Constructs an EventObservation object with the specified time, count, and observation file.
+     *
+     * @param time           The time of the observation event.
+     * @param count          The count of the observation.
+     * @param observationFile The observation file.
+     */
+    public EventObservation(double time, int count, Observation observationFile) {
         super(time);
         this.observationFile = observationFile;
         this.count = count;
     }
+
+    /**
+     * Runs the observation event, printing the observation details.
+     *
+     * @param list The event queue.
+     */
     @Override
-    public void runEvent(Queue list){
+    public void runEvent(Queue list) {
         System.out.println();
         System.out.println("Observation " + this.count);
         System.out.println("Present instant: " + time);

@@ -41,8 +41,8 @@ public class Constant{
      *
      * @param NodeNumber The number of nodes.
      */
-    public void setNodeNumber(int NodeNUmber){
-        this.NodeNumber = NodeNUmber;
+    public void setNodeNumber(int NodeNumber){
+        this.NodeNumber = NodeNumber;
     }
 
     /**
@@ -238,9 +238,9 @@ public class Constant{
      * Prints the values of the constants.
      */
     public void print(){
-        System.out.println("NodeNumber: " + NodeNumber);
-        System.out.println("maxweight: " + maxWeight);
-        System.out.println("NodeInit: " + NodeInit);
+        System.out.println("Input parameters:");
+        System.out.println("n: " + NodeNumber);
+        System.out.println("n1: " + NodeInit);
         System.out.println("alpha: " + alpha);
         System.out.println("beta: " + beta);
         System.out.println("delta: " + delta);
